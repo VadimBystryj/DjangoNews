@@ -1,6 +1,8 @@
 from django.db.models import Sum
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+from django.core.validators import MinValueValidator
+from django.urls import reverse
 
 
 class Author(models.Model):
@@ -19,10 +21,20 @@ class Author(models.Model):
         self.ratingAuthor = pRat * 3 + cRat
         self.save()
 
+    def __str__(self):
+        return self.authorUser.username
+
 
 class Category(models.Model):
     name = models.CharField(max_length=64, unique=True)
+    subscribers = models.ManyToManyField(User, related_name='categories')
 
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
     def __str__(self):
         return self.name
 
@@ -56,11 +68,21 @@ class Post(models.Model):
     def preview(self):
         return self.text[0:123] + '...'
 
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
+    def __str__(self):
+        return f"{self.title} {self.text} "
+    class Meta:
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
+
 
 class PostCategory(models.Model):
     postThrough = models.ForeignKey(Post, on_delete=models.CASCADE)
     categoryThrough = models.ForeignKey(Category, on_delete=models.CASCADE)
-
+    class Meta:
+        verbose_name = 'Категория постов'
+        verbose_name_plural = 'Категории постов'
 
 class Comment(models.Model):
     text = models.TextField()
@@ -68,7 +90,8 @@ class Comment(models.Model):
     commentUser = models.ForeignKey(User, on_delete=models.CASCADE)
     dateCreation = models.DateTimeField(auto_now_add=True)
     rating = models.SmallIntegerField(default=0)
-
+    def __str__(self):
+        return self.text
     def like(self):
         self.rating += 1
         self.save()
@@ -76,3 +99,7 @@ class Comment(models.Model):
     def dislike(self):
         self.rating -= 1
         self.save()
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

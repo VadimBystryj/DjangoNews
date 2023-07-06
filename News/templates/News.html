@@ -1,13 +1,52 @@
-<!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
 
-<!-- Название у нас будет products -->
+{% load custom_tags %}
+
 {% block title %}
-Posts
+News
 {% endblock title %}
 
 <!-- В контенте на странице мы выводим все посты -->
 {% block content %}
-<h1>Все новости</h1>
-{{ post }}
+<h1>Всего новостей {{ news|length }}</h1>
+<br>
+<br>
+
+
+{% if news %}
+    {% for post in news %}
+        <h2>{{ post.title|censor }}</h2>
+        <h3>{{ post.dateCreation|date:'d.m.Y' }}</h3>
+        <h3>{{ post.text|truncatechars:20|censor }}</h3>
+
+        </p>
+        <br>
+        <br>
+    {% endfor %}
+{% else %}
+    <h2>Пока нет новостей :(</h2>
+{% endif %}
+
+{# Информация о предыдущих страницах #}
+{% if page_obj.has_previous %}
+<a href="?{% url_replace page=1 %}">1</a>
+{% if page_obj.previous_page_number != 1 %}
+...
+<a href="?{% url_replace page=page_obj.previous_page_number %}">{{ page_obj.previous_page_number }}</a>
+{% endif %}
+{% endif %}
+
+{# Информация о текущей странице #}
+{{ page_obj.number }}
+
+{# Информация о следующих страницах #}
+{% if page_obj.has_next %}
+<a href="?{% url_replace page=page_obj.next_page_number %}">{{ page_obj.next_page_number }}</a>
+{% if paginator.num_pages != page_obj.next_page_number %}
+...
+<a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
+{% endif %}
+{% endif %}
+
 {% endblock content %}
