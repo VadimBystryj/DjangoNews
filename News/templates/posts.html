@@ -12,20 +12,34 @@ Posts
 <br>
 <br>
    <hr>
+   {% if perms.simpleapp.add_product %}
+   <a href="{% url 'post_create' %}">Добавить новость/статью</a>
+   {% endif %}
    {% if posts %}
        <table>
            <tr>
                <td>Заголовок</td>
                <td>Дата публикации</td>
                <td>Текст статьи</td>
+               </tr>
+               {% if perms.News_Portal.change_post or perms.News_Portal.delete_post %}
+               <td>Действия</td>
+               {% endif %}
            </tr>
-
            {% for post in posts %}
            <tr>
                <td>{{ post.title|censor }}</td>
                <td>{{ post.dateCreation|date:'d M Y' }}</td>
                <td>{{ post.text|truncatewords:20|censor }}</td>
-
+               <td>
+                    {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
+                    {% if perms.News_Portal.change_post %}
+                    <a href="{% url 'post_edit' pk=post.id %}">Изменить</a>
+                    {% endif %}
+                    {% if perms.News_Portal.delete_post %}
+                    <a href="{% url 'post_delete' post.id %}">Удалить</a>
+                    {% endif %}
+                </td>
            </tr>
            {% endfor %}
 

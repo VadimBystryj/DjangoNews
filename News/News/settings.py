@@ -14,12 +14,11 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 STATICFILES_DIRS = []
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-3hd^vqk!8ip9g10a-=o%imc3a)_54&mfac9au-e7%i&0e3q60v'
 
 # SECURITY WARNING: don't run with debug turned on in production!

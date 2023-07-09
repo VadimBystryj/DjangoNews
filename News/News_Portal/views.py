@@ -46,8 +46,9 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(LoginRequiredMixin, CreateView):
+class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     raise_exception = True
+    permission_required = ('News_Portal.add_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
@@ -60,15 +61,33 @@ class PostCreate(LoginRequiredMixin, CreateView):
         posts.save()
         return super().form_valid(form)
 
-class PostUpdate(UpdateView):
+class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    raise_exception = True
+    permission_required = ('News_Portal.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
 
 
-class PostDelete(DeleteView):
+class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    raise_exception = True
+    permission_required = ('News_Portal.delete_post',)
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
 
 
+class CategiryListView(ListView):
+    model = Post
+    template_name = 'category_list.html'
+    context_object_name = 'category_news_list'
+
+    def get_queryset(self):
+        self.postCategory = get_object_or_404(Category, id = self.kwargs['pk'])
+        queryset = Post.objects.filter(postCategory = self.postCategory).order_by('-dateCreation')
+        return queryset
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['is_not_subscriber'] = self.request.user not in self.postCategory.subscribers.all()
+        context['postCategory'] = self.postCategory
+        return context
