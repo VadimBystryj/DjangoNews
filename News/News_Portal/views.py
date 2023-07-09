@@ -1,6 +1,4 @@
-# Импортируем класс, который говорит нам о том,
-# что в этом представлении мы будем выводить список объектов из БД
-from django.contrib.auth.decorators import login_required
+
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Exists, OuterRef
 from django.shortcuts import render, get_object_or_404
@@ -48,7 +46,8 @@ class PostDetail(DetailView):
     context_object_name = 'post'
 
 
-class PostCreate(CreateView):
+class PostCreate(LoginRequiredMixin, CreateView):
+    raise_exception = True
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'

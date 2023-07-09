@@ -40,10 +40,16 @@ INSTALLED_APPS = [
     'News_Portal',
     'django.contrib.sites',
     'django.contrib.flatpages',
+    'accounts',
     'fpages',
     'News',
     'django_filters',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.yandex',
 ]
+LOGIN_REDIRECT_URL = "/News"
 SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -74,7 +80,10 @@ TEMPLATES = [
         },
     },
 ]
-
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 WSGI_APPLICATION = 'News.wsgi.application'
 
 
@@ -119,6 +128,11 @@ USE_I18N = True
 
 USE_TZ = True
 
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
