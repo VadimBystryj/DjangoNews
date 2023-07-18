@@ -15,8 +15,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-STATICFILES_DIRS = []
-
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 
 SECRET_KEY = 'django-insecure-3hd^vqk!8ip9g10a-=o%imc3a)_54&mfac9au-e7%i&0e3q60v'
@@ -47,8 +45,10 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.yandex',
+    "django_apscheduler",
 ]
-LOGIN_REDIRECT_URL = "/News"
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = "/posts"
 SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -116,8 +116,32 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = "BystrouVadzim@yandex.ru"
+EMAIL_HOST_PASSWORD = "noaxnxujckgnozvn"
+EMAIL_USE_TLS = False
+EMAIL_USE_SSL = True
+
+DEFAULT_FROM_EMAIL = "BystrouVadzim@yandex.ru"
+SERVER_EMAIL = "BystrouVadzim@yandex.ru"
+
+APSCHEDULER_DATETIME_FORMAT = 'N j, Y, f:s a'
+APSCHEDULER_RUN_NOW_TIMEOUT = 25
+MANAGERS = (
+    ('Vadim', 'Vadzimbystryj@yandex.ru'),
+    ('Vadzim', 'BystrouVadzim@yandex.ru'),
+)
+ADMINS = (
+    ('Vadzim', 'vadimbystryj@gmail.com'),
+)
 
 LANGUAGE_CODE = 'en-us'
 
@@ -127,11 +151,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_UNIQUE_EMAIL = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/

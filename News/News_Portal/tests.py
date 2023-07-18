@@ -43,7 +43,7 @@ a
 a.ratingAuthor
 for i in a:
     i.ratingAuthor
-    i.authorUser.username
+    i.authorUser.commentUser
 a = Post.objects.order_by('-rating')[:1]
 a
 for i in a:

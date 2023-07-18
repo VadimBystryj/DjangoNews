@@ -17,7 +17,7 @@ News
 {% if news %}
     {% for post in news %}
         <h2>{{ post.title|censor }}</h2>
-        <h3>{{ post.dateCreation|date:'d.m.Y' }}</h3>
+        <h3>{{ post.date|date:'d.m.Y' }}</h3>
         <h3>{{ post.text|truncatechars:20|censor }}</h3>
 
         </p>

@@ -1,34 +1,58 @@
 from django.contrib.auth.models import User
 from django.core.mail import EmailMultiAlternatives
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, m2m_changed
 from django.dispatch import receiver
+from django.template.loader import render_to_string
+from django.conf import settings
 
-from .models import Post
+from .models import Post, PostCategory
 
+
+
+
+def send_notifications(preview, pk, title, subscribers):
+    html_contect = render_to_string(
+        'post_created_email.html',
+        {
+            'text': preview,
+            'link': f'{settings.SITE_URL}/prj/{pk}'
+        }
+    )
+
+    msg = EmailMultiAlternatives(
+        subject=title,
+        body='',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=subscribers,
+    )
+
+    msg.attach_alternative(html_contect, 'text/html')
+    msg.send()
 
 @receiver(post_save, sender=Post)
-def post_created(instance, created, **kwargs):
-    if not created:
-        return
+def post_created(instance, **kwargs):
+    print('Создана статья', instance)
 
-    emails = User.objects.filter(
-        subscriptions__category=instance.postCategory
-    ).values_list('email', flat=True)
 
-    subject = f'Новый пост в категории {instance.postCategory}'
+@receiver(m2m_changed, sender=PostCategory)
+def notify_about_new_post(sender, instance, **kwargs):
+    if kwargs['action'] == 'post_add':
+        categories = instance.category
+        subscribers: list[str] = []
+        for category in categories:
+            subscribers += category.subscribers.all()
 
-    text_content = (
-        f'Название: {instance.title}\n'
-        f'Текст: {instance.text}\n\n'
-        f'Ссылка на новость: http://127.0.0.1:8000{instance.get_absolute_url()}'
-    )
-    html_content = (
-        f'Название: {instance.titleitle}<br>'
-        f'Текст: {instance.price}<br><br>'
-        f'<a href="http://127.0.0.1{instance.get_absolute_url()}">'
-        f'Ссылка на новость</a>'
-    )
-    for email in emails:
-        msg = EmailMultiAlternatives(subject, text_content, None, [email])
-        msg.attach_alternative(html_content, "text/html")
-        msg.send()
+        subscribers +=[s.email for s in subscribers]
+        print(subscribers)
+
+        send_notifications(instance.preview(), instance.pk, instance.title, subscribers)
+
+
+
+
+
+
+
+
+
+
