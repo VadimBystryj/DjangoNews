@@ -1,12 +1,3 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import PermissionRequiredMixin
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Exists, OuterRef
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy
-from django.views.decorators.csrf import csrf_protect
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.models import User
 from .filters import PostFilter, C, F, X
 from .forms import PostForm
@@ -14,7 +5,6 @@ from .models import Post, Comment, Category, Subscriptions
 from django.urls import reverse
 
 from datetime import datetime
-
 
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
@@ -30,17 +20,6 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .models import Subscriptions, Category
 
-def multiply(request):
-   number = request.GET.get('number')
-   multiplier = request.GET.get('multiplier')
-
-   try:
-       result = int(number) * int(multiplier)
-       html = f"<html><body>{number}*{multiplier}={result}</body></html>"
-   except (ValueError, TypeError):
-       html = f"<html><body>Invalid input.</body></html>"
-
-   return HttpResponse(html)
 
 
 class PostList(ListView):
@@ -80,7 +59,6 @@ class PostList(ListView):
         return render(request, 'comment_t.html', {'filter': x})
 
 
-
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
@@ -95,7 +73,6 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     template_name = 'post_create.html'
 
     def create_post(request):
-
         form = PostForm()
 
         if request.method == 'POST':
@@ -105,25 +82,26 @@ class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
         form = PostForm()
         return render(request, 'post_create.html', {'form': form})
 
+
 class PostUpdate(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    raise_exception = True
     permission_required = ('News_Portal.change_post',)
     form_class = PostForm
     model = Post
     template_name = 'post_edit.html'
-    success_url = reverse_lazy('posts')
 
     def get_success_url(self):
         return reverse('post_detail', kwargs={'pk': self.object.pk})
 
+
 class PostDelete(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    raise_exception = True
     permission_required = ('News_Portal.delete_post',)
     model = Post
-    queryset = Post.objects.all()
     template_name = 'post_delete.html'
-    success_url = reverse_lazy('posts')
+    success_url = reverse_lazy('post_list')
 
-    def get_success_url(self):
-        return reverse('post_delete', kwargs={'pk': self.object.pk})
+
 class PostSearch(ListView):
     model = Post
     template_name = 'post_search.html'
@@ -148,22 +126,24 @@ class PostSearch(ListView):
 class CategoryListView(ListView):
     model = Post
     template_name = 'category_list.html'
-    context_object_name = 'category_list'
+    context_object_name = 'category_news_list'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(args, kwargs)
-        self.request = None
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(args, kwargs)
+    #     self.request = None
 
     def get_queryset(self):
-        self.category = get_object_or_404(Category, id=self.kwargs['pk'])
-        queryset = Post.objects.filter(category=self.category).order_by('-dateCreation')
+        self.сategory = get_object_or_404(Category, id=self.kwargs['pk'])
+        queryset = Post.objects.filter(category=self.сategory).order_by('-dateCreation')
         return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['is_not_subscriber'] = self.request.user not in self.category.subscribers.all()
-        context['category'] = self.category
+        context['is_not_subscriber'] = self.request.user not in self.сategory.subscribers.all()
+        context['category'] = self.сategory
         return context
+
+
 @login_required()
 def subscribe(request, pk):
     user = request.user
@@ -171,8 +151,7 @@ def subscribe(request, pk):
     category.subscribers.add(user)
 
     message = 'Вы успешно подписались на рассылку новостей категории'
-    return render(request, 'subscribe.html', {'postCategory': category, 'message': message})
-
+    return render(request, 'subscribe.html', {'category': category, 'message': message})
 
 
 @login_required

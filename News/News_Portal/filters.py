@@ -15,7 +15,7 @@
 #         ),
 #     )
 #     post_category = ModelMultipleChoiceFilter(
-#         field_name='postCategory',
+#         field_name='category',
 #         queryset=Category.objects.all(),
 #         conjoined=True,
 #     )

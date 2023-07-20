@@ -72,7 +72,7 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='post',
-            name='postCategory',
+            name='category',
             field=models.ManyToManyField(through='News_Portal.PostCategory', to='News_Portal.category'),
         ),
         migrations.CreateModel(
