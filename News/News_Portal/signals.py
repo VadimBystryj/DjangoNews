@@ -15,7 +15,7 @@ def send_notifications(preview, pk, title, subscribers):
         'post_created_email.html',
         {
             'text': preview,
-            'link': f'{settings.SITE_URL}/prj/{pk}'
+            'link': f'{settings.SITE_URL}/posts/{pk}'
         }
     )
 
@@ -37,7 +37,7 @@ def post_created(instance, **kwargs):
 @receiver(m2m_changed, sender=PostCategory)
 def notify_about_new_post(sender, instance, **kwargs):
     if kwargs['action'] == 'post_add':
-        categories = instance.category
+        categories = instance.category.all()
         subscribers: list[str] = []
         for category in categories:
             subscribers += category.subscribers.all()
@@ -46,8 +46,6 @@ def notify_about_new_post(sender, instance, **kwargs):
         print(subscribers)
 
         send_notifications(instance.preview(), instance.pk, instance.title, subscribers)
-
-
 
 
 

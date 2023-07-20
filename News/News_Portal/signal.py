@@ -6,8 +6,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 from .models import Post, PostCategory
-
-
+from ..News.settings import SITE_URL
 
 
 def send_notifications(preview, pk, title, subscribers):
@@ -15,7 +14,7 @@ def send_notifications(preview, pk, title, subscribers):
         'post_created_email.html',
         {
             'text': preview,
-            'link': f'{settings.SITE_URL}/prj/{pk}'
+            'link': f'{SITE_URL}/posts/{pk}'
         }
     )
 
