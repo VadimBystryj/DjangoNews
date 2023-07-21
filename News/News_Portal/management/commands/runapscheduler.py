@@ -15,22 +15,30 @@ from News_Portal.models import Post, Category
 
 logger = logging.getLogger(__name__)
 
+
 def my_job():
-   today = datetime.datetime.now()
-   last_week = today - datetime.timedelta(days=7)
-   posts = Post.objects.filter(created__gte=last_week)
-   categories = set(posts.values_list('category__name', flat=True))
-   subscribers = set(Category.objects.filter(name__in=categories).valurs_list('subscribers__email', flat=True))
-   print(subscribers)
+    today = datetime.datetime.now()
+    last_week = today - datetime.timedelta(days=7)
+    posts = Post.objects.filter(dateCreation__gte=last_week)
+    categories = set(posts.values_list('category__name', flat=True))
+    subscribers = set(Category.objects.filter(name__in=categories).values_list('subscribers__email', flat=True))
 
-   html_content = render_to_string(
-       'daily_post.html',
-       {
-           'link': settings.SITE_URL,
-           'posts': posts,
-       }
-   )
+    html_content = render_to_string(
+        'daily_post.html',
+        {
+            'link': settings.SITE_URL,
+            'posts': posts,
+        }
+    )
+    msg = EmailMultiAlternatives(
+        subject='Статьи за неделю',
+        body='',
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        to=subscribers,
 
+    )
+    msg.attach_alternative(html_content, 'text/html')
+    msg.send()
 
 
 @util.close_old_connections
@@ -47,7 +55,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(day_of_week="friday",hour="18", minute="00"),
+            trigger=CronTrigger(),
             id="my_job",  # The `id` assigned to each job MUST be unique
             max_instances=1,
             replace_existing=True,
