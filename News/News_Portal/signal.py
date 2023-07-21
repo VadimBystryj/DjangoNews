@@ -6,8 +6,7 @@ from django.template.loader import render_to_string
 from django.conf import settings
 
 from .models import Post, PostCategory
-
-
+from ..News.settings import SITE_URL
 
 
 def send_notifications(preview, pk, title, subscribers):
@@ -15,7 +14,7 @@ def send_notifications(preview, pk, title, subscribers):
         'post_created_email.html',
         {
             'text': preview,
-            'link': f'{settings.SITE_URL}/posts/{pk}'
+            'link': f'{SITE_URL}/posts/{pk}'
         }
     )
 
@@ -37,7 +36,7 @@ def post_created(instance, **kwargs):
 @receiver(m2m_changed, sender=PostCategory)
 def notify_about_new_post(sender, instance, **kwargs):
     if kwargs['action'] == 'post_add':
-        categories = instance.category.all()
+        categories = instance.category
         subscribers: list[str] = []
         for category in categories:
             subscribers += category.subscribers.all()
@@ -46,11 +45,3 @@ def notify_about_new_post(sender, instance, **kwargs):
         print(subscribers)
 
         send_notifications(instance.preview(), instance.pk, instance.title, subscribers)
-
-
-
-
-
-
-
-

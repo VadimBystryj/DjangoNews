@@ -8,7 +8,7 @@ Posts
 {% endblock title %}
 
 {% block content %}
-<h1>Всего новостей {{ posts|length }}</h1>
+<h1 class="text-center">Новости <span class="text-muted fs-6 fw-normal">Всего:</span></h1>
 <br>
 <br>
    <hr>
@@ -16,14 +16,16 @@ Posts
    <a href="{% url 'post_create' %}">Добавить новость/статью</a>
    {% endif %}
    {% if posts %}
+
        <table>
            <tr>
                <td>Заголовок</td>
                <td>Дата публикации</td>
                <td>Текст статьи</td>
+               <td>Категория</td>
                </tr>
                {% if perms.News_Portal.change_post or perms.News_Portal.delete_post %}
-               <td>Действия</td>
+
                {% endif %}
            </tr>
            {% for post in posts %}
@@ -31,6 +33,12 @@ Posts
                <td>{{ post.title|censor }}</td>
                <td>{{ post.dateCreation|date:'d M Y' }}</td>
                <td>{{ post.text|truncatewords:20|censor }}</td>
+               <td>{% for category in post.category.all %}
+                   <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+<p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
+                   {% endfor %}
+               </td>
+
                <td>
                     {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
                     {% if perms.News_Portal.change_post %}

@@ -4,31 +4,61 @@
 {% load custom_tags %}
 
 {% block title %}
-News
+Posts
 {% endblock title %}
 
 {% block content %}
-<h1>Всего новостей {{ news|length }}</h1>
-
-{% if is_not_subscriber %}
-    <p class="text-center"><a href="{}" class="btn btn-secondary btn-sm">Подписаться</a> </p>
-{% endif %}
-
-
-{% if news %}
-{% for post in category_news_list %}
-<h2>{{ post.postTitle|censor }}</h2>
-<h3>{{ post.dateCreation|date:'d.m.Y' }}</h3>
-<h3>{{ post.postText|truncatechars:20|censor }}</h3>
-{% for postCategory in post.postCategory.all%}
-<a href="{% url 'category_list' postCategory.id%} ">{{ postCategory }}</a>
-{% endfor %}
+<h1 class="text-center">Новости категории {{ category }} <span class="text-muted fs-6 fw-normal"></span></h1>
+{%  if is_not_subscriber %}
+<p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
+{% endif%}
 <br>
 <br>
-{% endfor %}
-{% else %}
-<h2>Пока нет новостей :(</h2>
-{% endif %}
+   <hr>
+   {% if perms.News_Portal.add_post %}
+   <a href="{% url 'post_create' %}">Добавить новость/статью</a>
+   {% endif %}
+   {% if category_news_list %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Текст статьи</td>
+               <td>Категория</td>
+               </tr>
+               {% if perms.News_Portal.change_post or perms.News_Portal.delete_post %}
+               {% endif %}
+           </tr>
+            <p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
+           {% for post in category_news_list %}
+
+           <tr>
+
+               <td>{{ post.title|censor }}</td>
+               <td>{{ post.dateCreation|date:'d M Y' }}</td>
+               <td>{{ post.text|truncatewords:20|censor }}</td>
+               <td>{% for Category in post.category.all %}
+                   <a href="{% url 'category_list' category.id %}">{{ category }}<a/>
+
+                      {% endfor %}
+               </td>
+
+               <td>
+                    {# А здесь доступ для каждой ссылки теперь будем проверять отдельно #}
+                    {% if perms.News_Portal.change_post %}
+                    <a href="{% url 'post_edit' pk=post.id %}">Изменить</a>
+                    {% endif %}
+                    {% if perms.News_Portal.delete_post %}
+                    <a href="{% url 'post_delete' post.id %}">Удалить</a>
+                    {% endif %}
+                </td>
+           </tr>
+           {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Новостей нет!</h2>
+   {% endif %}
 {# Информация о предыдущих страницах #}
 {% if page_obj.has_previous %}
 <a href="?{% url_replace page=1 %}">1</a>
@@ -49,5 +79,4 @@ News
 <a href="?{% url_replace page=page_obj.paginator.num_pages %}">{{ page_obj.paginator.num_pages }}</a>
 {% endif %}
 {% endif %}
-
 {% endblock content %}

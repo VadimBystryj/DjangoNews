@@ -16,12 +16,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from News_Portal.views import subscriptions
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('pages/', include('django.contrib.flatpages.urls')),
-    # path('accounts/', include('django.contrib.auth.urls')),
     path('accounts/', include('allauth.urls')),
-    # path('accounts/', include('accounts.urls')),
-    path('News/', include('News_Portal.urls')),
-    path('articles/', include('News_Portal.urls')),
+    path('post/', include('News_Portal.urls')),
+    path('posts/', include('News_Portal.urls')),
+    path('subscriptions/', subscriptions, name='subscriptions'),
 ]
