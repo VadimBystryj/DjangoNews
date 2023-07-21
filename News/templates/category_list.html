@@ -8,9 +8,9 @@ Posts
 {% endblock title %}
 
 {% block content %}
-<h1>Всего новостей {{ Posts|length }}</h1>
+<h1 class="text-center">Новости категории {{ category }} <span class="text-muted fs-6 fw-normal"></span></h1>
 {%  if is_not_subscriber %}
-    <p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
+<p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
 {% endif%}
 <br>
 <br>
@@ -27,16 +27,18 @@ Posts
                <td>Категория</td>
                </tr>
                {% if perms.News_Portal.change_post or perms.News_Portal.delete_post %}
-               <td>Действия</td>
                {% endif %}
            </tr>
+            <p class="text-center"><a href="{% url 'subscribe' category.id %}" class="btn btn-secondary btm-sm">Подписаться</a></p>
            {% for post in category_news_list %}
+
            <tr>
+
                <td>{{ post.title|censor }}</td>
                <td>{{ post.dateCreation|date:'d M Y' }}</td>
                <td>{{ post.text|truncatewords:20|censor }}</td>
                <td>{% for Category in post.category.all %}
-                   <a href="{% url 'category_list' category.id %}">{{ category }}</a>
+                   <a href="{% url 'category_list' category.id %}">{{ category }}<a/>
 
                       {% endfor %}
                </td>

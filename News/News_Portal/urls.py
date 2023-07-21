@@ -10,6 +10,6 @@ urlpatterns = [
     path('<int:pk>/delete/', PostDelete.as_view(), name='post_delete'),
     path('categories/<int:pk>', CategoryListView.as_view(), name='category_list'),
     path('categories/<int:pk>/subscribe', subscribe, name='subscribe'),
-    path('subscriptions/', subscriptions, name='subscriptions'),
+
 
 ]

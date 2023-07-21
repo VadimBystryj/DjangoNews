@@ -16,6 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from News_Portal.views import subscriptions
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +24,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('post/', include('News_Portal.urls')),
     path('posts/', include('News_Portal.urls')),
-    path('articles/', include('News_Portal.urls')),
-    path('subscriptions/', include('News_Portal.urls')),
+    path('subscriptions/', subscriptions, name='subscriptions'),
 ]

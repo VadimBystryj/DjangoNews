@@ -11,7 +11,7 @@ from django_apscheduler import util
 from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 
-from News.News_Portal.models import Post, Category
+from News_Portal.models import Post, Category
 
 logger = logging.getLogger(__name__)
 
