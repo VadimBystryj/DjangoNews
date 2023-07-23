@@ -14,7 +14,12 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+    }
+}
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
 
 SECRET_KEY = 'django-insecure-3hd^vqk!8ip9g10a-=o%imc3a)_54&mfac9au-e7%i&0e3q60v'
@@ -142,7 +147,11 @@ MANAGERS = (
 ADMINS = (
     ('Vadzim', 'vadimbystryj@gmail.com'),
 )
-
+CELERY_BROKER_URL = 'redis://default:srS6qbbrYbWmM3Ybwv27tIeW5eDtRUc3@redis-15622.c267.us-east-1-4.ec2.cloud.redislabs.com:15622'
+CELERY_RESULT_BACKEND = 'redis://default:srS6qbbrYbWmM3Ybwv27tIeW5eDtRUc3@redis-15622.c267.us-east-1-4.ec2.cloud.redislabs.com:15622'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'

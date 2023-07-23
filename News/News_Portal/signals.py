@@ -42,13 +42,37 @@ def notify_about_new_post(sender, instance, **kwargs):
         for category in categories:
             subscribers += category.subscribers.all()
 
-        subscribers +=[s.email for s in subscribers]
+        subscribers += [s.email for s in subscribers]
         print(subscribers)
 
         send_notifications(instance.preview(), instance.pk, instance.title, subscribers)
+#
 
 
-
+# from django.db.models.signals import post_save
+# from django.dispatch import receiver
+#
+# from .models import Post
+# from .tasks import *
+#
+# from django.contrib.auth.models import User
+# from django.core.mail import EmailMultiAlternatives
+#
+#
+# @receiver(post_save, sender=Post)  # декоратор для сигналов
+# def post_created(sender, instance, created, **kwargs):
+#     """Сигнал срабатывает при появлении новой публикации и вызывает таску"""
+#     if created:  # при появлении новой публикации
+#         # получаем email подписчиков этой публикации
+#         emails = list(User.objects.filter(subscribers__category=instance.category).values_list('email', flat=True))
+#
+#         # вызываем нашу таску и передаем ей необходимые аргументы
+#         with_every_new_post.delay(instance.category.title,
+#                                   instance.preview(),
+#                                   instance.title,
+#                                   emails,
+#                                   instance.get_absolute_url(),
+#                                   )
 
 
 
