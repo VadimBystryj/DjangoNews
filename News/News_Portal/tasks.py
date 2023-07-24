@@ -33,8 +33,8 @@ def with_every_new_post(category, preview, title, emails, get_absolute_url):
 
 @shared_task
 def weekly_newsletter():
-    today = datetime.now()
-    last_week = today - datetime.timedelta(days=7)
+    today = datetime.utcnow()
+    last_week = today - timedelta(days=7)
     posts = Post.objects.filter(dateCreation__gte=last_week)
     print(f'{posts}')
     users = User.objects.all().values_list('email', flat=True)
