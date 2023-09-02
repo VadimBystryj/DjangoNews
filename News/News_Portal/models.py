@@ -2,7 +2,7 @@ from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.db import models
 from django.urls import reverse
-
+from django.core.cache import cache
 
 class Author(models.Model):
     authorUser = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -33,8 +33,10 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
+
     def __str__(self):
         return self.name
+
 class Subscriptions(models.Model):
     user = models.ForeignKey(
         to=User,
@@ -46,7 +48,6 @@ class Subscriptions(models.Model):
         on_delete=models.CASCADE,
         related_name='subscriptions',
     )
-
 
 class Post(models.Model):
     NEWS = 'NW'
@@ -63,8 +64,10 @@ class Post(models.Model):
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
 
+
     def __str__(self):
         return f'{self.title}: {self.text[:20]}...'
+
     def get_absolute_url(self):
         return reverse('post_detail', args=[str(self.id)])
 
@@ -82,6 +85,10 @@ class Post(models.Model):
     class Meta:
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)  # сначала вызываем метод родителя, чтобы объект сохранился
+        cache.delete(f'post-{self.pk}')
 
 
 class PostCategory(models.Model):

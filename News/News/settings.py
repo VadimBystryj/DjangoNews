@@ -14,10 +14,12 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
         'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+        'TIMEOUT': 30,
     }
 }
 ACCOUNT_FORMS = {"signup": "accounts.forms.CustomSignupForm"}
@@ -173,3 +175,124 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATICFILES_DIRS = [
     BASE_DIR / "static"
 ]
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'form_debug': {
+            'format': '{asctime} - [{levelname}] - {message}',
+            'style': '{',
+        },  # 1
+
+        'form_warning_mail': {
+            'format': '{asctime} - [{levelname}] - {message} - {pathname} ',
+            'style': '{',
+        },  # 1 и 5
+
+        'form_error': {
+            'format': '{asctime} - [{levelname}] - {message} - {pathname} - {exc_info} ',
+            'style': '{',
+        },  # 1 и 3
+
+        'general_security_info': {
+            'format': '{asctime} - [{levelname}] - {message} - {module} ',
+            'style': '{',
+        },  # 2 и 4
+    },
+
+    'handlers': {
+        'console_d': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'form_debug',
+        },  # 1
+
+        'console_w': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'form_warning_mail',
+        },  # 1
+
+        'console_e': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'form_error',
+        },  # 1
+
+        'general_hand': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'formatter': 'general_security_info',
+            'filename': 'general.log',
+        },  # 2
+
+        'errors_hand': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'formatter': 'form_error',
+            'filename': 'errors.log',
+        },  # 3
+
+        'security_hand': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'formatter': 'general_security_info',
+            'filename': 'security.log',
+        },  # 4
+
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'form_warning_mail',
+        },  # 5
+    },
+
+    'filters': {
+        'require_debug_true': {'()': 'django.utils.log.RequireDebugTrue'},  # 1 х3
+        'require_debug_false': {'()': 'django.utils.log.RequireDebugFalse'},  # 5 и 2
+    },
+
+    'loggers': {
+        'django': {
+            'handlers': ['console_d', 'console_w', 'console_e', 'general_hand', ],
+            'level': 'DEBUG',
+            'propagate': True,
+        },  # 1 и 2
+
+        'django.request': {
+            'handlers': ['errors_hand', 'mail_admins', ],
+            'level': 'ERROR',
+            'propagate': False,
+        },  # 3 и 5
+
+        'django.server': {
+            'handlers': ['errors_hand', 'mail_admins', ],
+            'level': 'ERROR',
+            'propagate': False,
+        },  # 3 и 5
+
+        'django.template': {
+            'handlers': ['errors_hand', ],
+            'level': 'ERROR',
+            'propagate': True,
+        },  # 3
+
+        'django.db.backends': {
+            'handlers': ['errors_hand', ],
+            'level': 'ERROR',
+            'propagate': True,
+        },  # 3
+
+        'django.security': {
+            'handlers': ['security_hand', ],
+            'level': 'INFO',
+            'propagate': False,
+        },  # 4
+    }
+}

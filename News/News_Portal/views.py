@@ -3,9 +3,8 @@ from .filters import PostFilter, C, F, X
 from .forms import PostForm
 from .models import Post, Comment, Category, Subscriptions
 from django.urls import reverse
-
 from datetime import datetime
-
+from django.core.cache import cache
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
@@ -58,11 +57,21 @@ class PostList(ListView):
         x = X(request.GET, queryset=Comment.objects.all())
         return render(request, 'comment_t.html', {'filter': x})
 
-
 class PostDetail(DetailView):
     model = Post
     template_name = 'post.html'
     context_object_name = 'post'
+
+    def get_object(self, *args, **kwargs):  # переопределяем метод получения объекта, как ни странно
+        obj = cache.get(f'product-{self.kwargs["pk"]}',
+                        None)  # кэш очень похож на словарь, и метод get действует так же. Он забирает значение по ключу, если его нет, то забирает None.
+
+        # если объекта нет в кэше, то получаем его и записываем в кэш
+        if not obj:
+            obj = super().get_object(queryset=self.queryset)
+            cache.set(f'product-{self.kwargs["pk"]}', obj)
+            return obj
+
 
 
 class PostCreate(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
