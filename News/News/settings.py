@@ -201,10 +201,11 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'django.security': ['security_handler', ],
+        'django.security': {
             'handlers': ['security_handler'],
             'level': 'INFO',
             'propagate': False,
+        },
     },
     'handlers': {
         'console_debug': {
