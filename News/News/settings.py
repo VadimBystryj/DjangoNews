@@ -144,7 +144,8 @@ MANAGERS = (
     ('Vadzim', 'BystrouVadzim@yandex.ru'),
 )
 ADMINS = (
-    ('Vadzim', 'vadimbystryj@gmail.com'),
+    ('vadim', 'vadimbystryj@gmail.com'),
+
 )
 CELERY_BROKER_URL = 'redis://default:srS6qbbrYbWmM3Ybwv27tIeW5eDtRUc3@redis-15622.c267.us-east-1-4.ec2.cloud.redislabs.com:15622'
 CELERY_RESULT_BACKEND = 'redis://default:srS6qbbrYbWmM3Ybwv27tIeW5eDtRUc3@redis-15622.c267.us-east-1-4.ec2.cloud.redislabs.com:15622'
@@ -247,7 +248,7 @@ LOGGING = {
         },
         'mail_admins': {
             'level': 'ERROR',
-            'filter': ['require_debug_false'],
+            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler',
             'formatter': 'form_warning_mail',
         },

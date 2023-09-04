@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+
+import News_Portal
 from .filters import PostFilter, C, F, X
 from .forms import PostForm
 from .models import Post, Comment, Category, Subscriptions
@@ -18,7 +20,6 @@ from django.db.models import Exists, OuterRef
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_protect
 from .models import Subscriptions, Category
-
 
 
 class PostList(ListView):
