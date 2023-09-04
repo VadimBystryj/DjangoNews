@@ -18,7 +18,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': os.path.join(BASE_DIR, 'cache_files'), # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
+        'LOCATION': os.path.join(BASE_DIR, 'cache_files'),
+        # Указываем, куда будем сохранять кэшируемые файлы! Не забываем создать папку cache_files внутри папки с manage.py!
         'TIMEOUT': 30,
     }
 }
@@ -30,7 +31,6 @@ SECRET_KEY = 'django-insecure-3hd^vqk!8ip9g10a-=o%imc3a)_54&mfac9au-e7%i&0e3q60v
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -92,7 +92,6 @@ AUTHENTICATION_BACKENDS = [
 ]
 WSGI_APPLICATION = 'News.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
@@ -102,7 +101,6 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -121,7 +119,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
 
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
@@ -161,7 +158,6 @@ TIME_ZONE = 'Europe/Warsaw'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -206,8 +202,9 @@ LOGGING = {
             'propagate': True,
         },
         'django.security': ['security_handler', ],
-        'level': 'INFO',
-        'propagate': False,
+            'handlers': ['security_handler'],
+            'level': 'INFO',
+            'propagate': False,
     },
     'handlers': {
         'console_debug': {
